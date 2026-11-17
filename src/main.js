@@ -1,4 +1,4 @@
-import {displayDate,displayMonth,parseDateInput,displayTimestamp,toMinute,ceilMinute} from './dates.js';
+import {displayDate,displayMonth,displayTimestamp,toMinute,ceilMinute} from './dates.js';
 import {summaryRows,dailyRows,groupedReportRows,timePairCount,periodTotals,durationText,totalDurationText,totalNotes} from './presentation.js';
 import {mountMap} from './map.js';
 import './style.css';
@@ -13,7 +13,7 @@ document.querySelector('#app').innerHTML=`
 <main><p class="privacy-strip no-print">${PRIVACY}</p>
 <div class="grid no-print"><section class="card"><div class="step">01 / Fonte de dados</div><h2>Importar Linha do Tempo</h2><p class="muted">Selecione o JSON exportado pelo celular. O arquivo original não será alterado.</p><section class="android-instructions" aria-labelledby="android-instructions-title"><h3 id="android-instructions-title">Como obter os dados no Android</h3><ol class="muted"><li>Abra as <strong>Configurações do Android</strong> (ícone de engrenagem).</li><li>Acesse <strong>Localização → Serviços de localização → Linha do tempo</strong>.</li><li>Toque em <strong>Exportar dados da linha do tempo</strong> e confirme a exportação.</li><li>Salve o JSON em uma pasta acessível e selecione-o no botão abaixo.</li></ol><p class="muted">Os nomes podem variar conforme fabricante e versão do Android.</p></section><label for="file">Arquivo JSON</label><input id="file" type="file" accept=".json,application/json"><div id="importInfo" class="muted"></div></section>
 <section class="card"><div class="step">02 / Local de trabalho</div><h2>Encontrar o estabelecimento</h2><p class="muted">Digite o endereço ou nome, escolha uma sugestão e o local aparecerá no mapa automaticamente. </p><label id="addressLabel" for="address">Endereço ou nome do estabelecimento</label><input id="address" type="text" maxlength="200" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="addressResults" placeholder="Ex.: nome do estabelecimento, rua e cidade"><button id="search" class="secondary">Buscar</button><p class="muted">A busca e o mapa usam serviços externos.</p><div id="addressResults" role="listbox" aria-label="Sugestões de locais"></div><p id="mapStatus" class="muted" role="status"></p><p id="tileStatus" class="muted" role="status"></p><div id="onlineMap" hidden><p class="muted">Clique no mapa ou arraste o marcador para ajustar o ponto.</p><div id="map" class="slippy-map" aria-label="Mapa do estabelecimento selecionado"></div></div><p id="selectedPlace" class="muted">Nenhum local selecionado.</p><label for="radius">Raio da área (metros)</label><input id="radius" type="number" value="100" min="1" max="500"><p class="muted">Ajuste o raio para abranger o estabelecimento.</p><details><summary>Alternativa manual, se o serviço estiver indisponível</summary><div class="row"><div><label for="lat">Latitude</label><input id="lat" type="number" step="any"></div><div><label for="lon">Longitude</label><input id="lon" type="number" step="any"></div></div></details><label class="confirm-location" for="confirmed"><input id="confirmed" type="checkbox"><span>Confirmo o local e a área selecionados.</span></label></section></div>
-<section class="card no-print"><div class="step">03 / Período</div><h2>Selecionar o período e analisar</h2><div class="row"><div><label for="from">Data inicial (inclusive)</label><input id="from" type="text" inputmode="numeric" maxlength="10" placeholder="DD-MM-AAAA"></div><div><label for="to">Data final (inclusive)</label><input id="to" type="text" inputmode="numeric" maxlength="10" placeholder="DD-MM-AAAA"></div><div><label for="zone">Fuso horário</label><input id="zone" value="America/Sao_Paulo" list="zones"><datalist id="zones"><option>America/Sao_Paulo</option><option>America/Manaus</option><option>America/Rio_Branco</option><option>UTC</option></datalist></div></div><button id="analyze" disabled>Analisar presença</button><p id="message" role="status" aria-live="polite"></p></section>
+<section class="card no-print"><div class="step">03 / Período</div><h2>Selecionar o período e analisar</h2><div class="row period-fields"><div><label for="from">Data inicial (inclusive)</label><input id="from" type="date" required aria-describedby="periodError"></div><div><label for="to">Data final (inclusive)</label><input id="to" type="date" required aria-describedby="periodError"></div><div><label for="zone">Fuso horário</label><input id="zone" value="America/Sao_Paulo" list="zones"><datalist id="zones"><option>America/Sao_Paulo</option><option>America/Manaus</option><option>America/Rio_Branco</option><option>UTC</option></datalist></div></div><p id="periodError" class="error" role="status" aria-live="polite"></p><button id="fullPeriod" class="secondary" disabled>Usar todo o período disponível</button><button id="analyze" disabled>Analisar presença</button><p id="message" role="status" aria-live="polite"></p></section>
 <section id="results" class="card" hidden></section>
 <details class="card no-print advanced-verification"><summary>Conferir integridade do arquivo (hash)</summary><p class="muted">O hash é uma impressão digital do arquivo: permite verificar se seu conteúdo é idêntico ao arquivo de referência. Se o conteúdo mudar, o hash também muda. A conferência não comprova a origem do arquivo nem a veracidade dos dados.</p><p class="muted">Compare um arquivo com o JSON original importado ou use o manifesto de hashes para conferir um relatório exportado. Também é possível carregar o relatório JSON e seu original para recalcular e conferir os resultados. A verificação é feita no seu dispositivo.</p><label for="compare">Comparar outro arquivo com o hash do original importado</label><input id="compare" type="file"><p id="compareResult" role="status"></p><label for="reportFile">Relatório Geoprova JSON ou manifesto de hashes</label><input id="reportFile" type="file" accept=".json"><label for="evidenceFile">JSON original (reprodução) ou arquivo exportado (manifesto)</label><input id="evidenceFile" type="file"><button id="verify" class="secondary">Conferir localmente</button><p id="verifyResult" role="status"></p></details>
 <details class="card no-print"><summary>Sobre os dados e a privacidade</summary><p class="muted">${ABSENCE}</p><p class="muted">${HASH_NOTICE}</p><p class="muted">A busca de locais consulta Photon/komoot e o mapa usa OpenStreetMap. Esses serviços recebem a busca ou a área visualizada e dados da conexão. O arquivo importado e os relatórios ficam neste dispositivo.</p></details></main><footer>Geoprova ${VERSION} · Análise local</footer>`;
@@ -21,8 +21,23 @@ function time(t,zone=result?.params.zone||$('zone').value) {return t==null?'Não
 function error(e) {$('message').className='error';$('message').textContent=e.message||String(e);}
 function invalidate() {result=report=null;$('results').hidden=true;}
 for(const id of ['lat','lon','radius','from','to','zone','confirmed']) $(id).addEventListener('input',()=>{invalidate();if(['lat','lon','radius'].includes(id))$('confirmed').checked=false;});
+function validatePeriod(requireDates=false) {
+  const from=$('from').value,to=$('to').value;
+  const message=(!from||!to)?(requireDates?'Selecione a data inicial e a data final.':''):from>to?'A data final deve ser igual ou posterior à data inicial.':'';
+  $('periodError').textContent=message;
+  $('from').setAttribute('aria-invalid',String(!!message));$('to').setAttribute('aria-invalid',String(!!message));
+  return !message;
+}
+for(const id of ['from','to']) $(id).addEventListener('input',()=>validatePeriod());
+function useFullPeriod() {
+  const ranges=Object.values(source?.coverage||{}).filter(Boolean);if(!ranges.length)return;
+  $('from').value=dayAt(Math.min(...ranges.map(c=>c.start)),$('zone').value);
+  $('to').value=dayAt(Math.max(...ranges.map(c=>c.end)),$('zone').value);
+  invalidate();validatePeriod();
+}
+$('fullPeriod').onclick=()=>{try{useFullPeriod();}catch(e){error(e);}};
 $('file').onchange=async()=> {
-  invalidate();source=metadata=originalBytes=null;$('analyze').disabled=true;$('importInfo').textContent='';
+  invalidate();source=metadata=originalBytes=null;$('analyze').disabled=$('fullPeriod').disabled=true;$('importInfo').textContent='';$('from').value=$('to').value='';validatePeriod();
   try {
     const f=$('file').files[0];if(!f)return;
     $('message').textContent='Lendo arquivo…';
@@ -34,15 +49,16 @@ $('file').onchange=async()=> {
     $('importInfo').innerHTML=`<p><strong>${esc(f.name)}</strong></p>`;
     const ranges=Object.values(source.coverage).filter(Boolean);
     if(!ranges.length) throw Error('Não há registros de localização reconhecidos. O arquivo pode conter apenas configurações. Exporte a Linha do Tempo pelas configurações do celular. Isso não significa ausência no trabalho.');
-    $('from').value=displayDate(dayAt(Math.min(...ranges.map(c=>c.start)),$('zone').value));$('to').value=displayDate(dayAt(Math.max(...ranges.map(c=>c.end)),$('zone').value));
-    $('importInfo').innerHTML+=`<p class="muted">Período disponível: ${esc($('from').value)} a ${esc($('to').value)}</p>`;
+    useFullPeriod();$('fullPeriod').disabled=false;
+    $('importInfo').innerHTML+=`<p class="muted">Período disponível: ${esc(displayDate($('from').value))} a ${esc(displayDate($('to').value))}</p>`;
     $('analyze').disabled=false;$('message').textContent='Arquivo lido localmente. Confirme a área e o período para continuar.';
   }catch(e){error(e);}
 };
 $('compare').onchange=async()=>{try{if(!metadata)throw Error('Importe primeiro o JSON original.');const f=$('compare').files[0];if(!f)return;const h=await sha256(await f.arrayBuffer());$('compareResult').textContent=h===metadata.sha256?'Conteúdo idêntico ao original importado.':'Conteúdo diferente do original importado.';}catch(e){$('compareResult').textContent=e.message;}};
 function params() {
+  if(!validatePeriod(true))throw Error($('periodError').textContent);
   if(!$('lat').value||!$('lon').value)throw Error('Busque um endereço e selecione o ponto no mapa, ou use a alternativa por coordenadas.');
-  const p={from:parseDateInput($('from').value),to:parseDateInput($('to').value),zone:$('zone').value,confirmed:$('confirmed').checked,area:{lat:+$('lat').value,lon:+$('lon').value,radius:+$('radius').value,polygon:[],label:locationLabel},maxAccuracy:100,maxGapMinutes:30,maxSpeed:100,positionPairing:'hybrid'};
+  const p={from:$('from').value,to:$('to').value,zone:$('zone').value,confirmed:$('confirmed').checked,area:{lat:+$('lat').value,lon:+$('lon').value,radius:+$('radius').value,polygon:[],label:locationLabel},maxAccuracy:100,maxGapMinutes:30,maxSpeed:100,positionPairing:'hybrid'};
   if(![p.maxAccuracy,p.maxGapMinutes,p.maxSpeed].every(v=>Number.isFinite(v)&&v>0))throw Error('Os limites devem ser números positivos.');return p;
 }
 $('analyze').onclick=()=> {try{if(!source)throw Error('Importe um arquivo.');result=analyze(source,params());report={...portable(result,metadata),id:crypto.randomUUID()};render();$('message').className='';$('message').textContent='Relatório pronto.';}catch(e){error(e);}};

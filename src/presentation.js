@@ -66,3 +66,8 @@ export function timePairCount(report){return Math.max(2,...dailyRows(report).map
 export function totalNotes(total){return [total.hasEstimates?(total.approximateMode?'Inclui horários aproximados':'† Inclui estimativas por transições espaciais'):'',total.unquantifiableDays?'Total parcial: soma dos intervalos disponíveis':'',total.partial?`Período: ${displayDate(total.selectedFrom)} a ${displayDate(total.selectedTo)}`:'',total.hasAlerts?'* Registros com alertas':''].filter(Boolean).join('. ');}
 
 export function totalDurationText(total){if(!total.spatialMode)return durationText(total.durationMs);if(total.durationMinMs==null)return 'Não apurável';return total.durationMinMs===total.durationMaxMs?durationText(total.durationMinMs):durationText(total.durationMinMs)+' a '+durationText(total.durationMaxMs);}
+
+export function radiusReviewNotice(rows) {
+  if(!rows.some(row=>!row.positionOnly&&((row.arrival!=null)!==(row.departure!=null))))return '';
+  return 'Há registros com entrada sem saída ou saída sem entrada. Confira o ponto selecionado no mapa e tente aumentar o raio, se a nova área corresponder ao estabelecimento. Isso pode incluir visitas próximas que ficaram fora da área atual. A falta de horários também pode decorrer de dados insuficientes; aumentar o raio não garante recuperar os horários e pode incluir outros locais.';
+}

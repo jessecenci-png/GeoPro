@@ -2,7 +2,7 @@ import {regular,bold} from './pdf-fonts.js';
 import {jsPDF} from 'jspdf';
 import {autoTable} from 'jspdf-autotable';
 import {displayDate,displayMonth,displayTimestamp,dayAt,toMinute,ceilMinute} from './dates.js';
-import {dailyRows,groupedReportRows,summaryRows,timePairCount,periodTotals,totalNotes,totalDurationText} from './presentation.js';
+import {dailyRows,groupedReportRows,summaryRows,timePairCount,periodTotals,totalNotes,totalDurationText,radiusReviewNotice} from './presentation.js';
 import {userAlertText} from './export.js';
 
 // Text and tables remain searchable; no screenshot, upload or print dialog is needed.
@@ -39,6 +39,7 @@ export function reportPDF(report) {
   paragraph('Presença no local não equivale a tempo de trabalho. Dias sem registros não comprovam ausência.');
   if(report.days.some(d=>d.approximateMode))paragraph('Horários aproximados. A visita da Linha do Tempo tem prioridade. Sem visita no dia, a primeira e a última posição interna são usadas como limites conservadores, supondo permanência entre elas enquanto não houver evidência de saída ou deslocamento.');
   const rows=summaryRows(report),days=dailyRows(report),pairs=timePairCount(report);
+  const radiusNotice=radiusReviewNotice(rows);if(radiusNotice)paragraph('Atenção ao raio da área: '+radiusNotice);
   const hasVisits=report.params.positionPairing==='spatial'||days.some(d=>d.visits.length),hasPositions=days.some(d=>d.positionTimes.length);
   const zone=report.params.zone;
   const clock=(t,day)=>t==null?'-':dayAt(t,zone)===day?new Intl.DateTimeFormat('pt-BR',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(t):displayTimestamp(t,zone).replace(/(\d{2}:\d{2}):\d{2}/,'$1');

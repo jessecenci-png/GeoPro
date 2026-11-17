@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import ExcelJS from 'exceljs';
 import {normalize,analyze} from '../src/analysis.js';
-import {dailyRows,periodTotals,totalDurationText} from '../src/presentation.js';
+import {dailyRows,periodTotals,totalDurationText,radiusReviewNotice} from '../src/presentation.js';
 import {workbook,portable} from '../src/export.js';
 const params={from:'2025-08-13',to:'2025-08-13',zone:'America/Sao_Paulo',confirmed:true,area:{lat:-23,lon:-46,radius:100},maxAccuracy:100,maxGapMinutes:30,maxSpeed:100,positionPairing:'hybrid'};
 const at=t=>Date.parse(`2025-08-13T${t}-03:00`);
@@ -38,4 +38,12 @@ test('descarta segundos de cada limite antes de calcular e somar; fonte permanec
  assert.equal(day.visits[0].arrival,at('08:00:00'));assert.equal(day.visits[0].departure,at('09:00:00'));
  assert.equal(day.durationMs,120*60000);assert.equal(periodTotals(report).weeks[0].durationMs,120*60000);assert.equal(periodTotals(report).months[0].durationMs,120*60000);
  assert.equal(report.days[0].periods[0].originalStart,at('08:00:59'));assert.equal(JSON.stringify(json),original);
+});
+
+test('alerta sobre revisão do raio para limite incompleto, em ambas as direções',()=>{
+ assert.match(radiusReviewNotice([{arrival:1,departure:null}]),/tente aumentar o raio/);
+ assert.match(radiusReviewNotice([{arrival:null,departure:1}]),/dados insuficientes/);
+ assert.equal(radiusReviewNotice([{arrival:1,departure:2}]),'');
+ assert.equal(radiusReviewNotice([{arrival:null,departure:null}]),'');
+ assert.equal(radiusReviewNotice([{positionOnly:true,arrival:null,departure:null}]),'');
 });

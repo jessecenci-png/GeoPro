@@ -127,3 +127,13 @@ Sem visita no dia, usa-se a primeira e a última posição interna de um grupo c
 Um ponto único não recebe saída nem duração inventadas. Não se infere continuidade entre dias apenas por posições avulsas; visitas classificadas que cruzem a meia-noite continuam recortadas corretamente. A origem de cada horário e a hipótese de continuidade ficam nos dados derivados e nas referências. O modo de janelas espaciais da 0.8 permanece disponível separadamente; deixou de ser o padrão.
 
 Os segundos são preservados no modo principal, tanto nos horários quanto nas durações e valores da planilha. A separação excessiva da 0.8 era causada pelo limite de lacuna, não pela exibição sem segundos. Caso de regressão: visita em 13-08-2025 08:56:00–11:34:00, direção às 11:34:05 e pontos avulsos antes/depois; a apuração mantém uma visita de 2h38, sem antecipar para 08:36 nem prolongar para 11:35. O teste usa dados sintéticos equivalentes, não o histórico real do usuário.
+
+## Versão 0.9.1 - 17/11/2026
+
+- Orientações de exportação Android sempre visíveis antes da importação.
+- Seletores de data e opção de restaurar todo o período disponível.
+- Modo de apuração e limites técnicos definidos internamente.
+- Exportação de PDF e JSON, acompanhados de manifesto de integridade.
+- Horários em HH:MM; segundos descartados de cada limite antes dos cálculos.
+- Alerta para conferir o ponto e o raio quando houver entrada ou saída sem par.
+- Conferência por hash com explicação sobre integridade e seus limites.

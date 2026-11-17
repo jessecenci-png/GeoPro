@@ -39,7 +39,7 @@ export function reportPDF(report) {
   paragraph('Presença no local não equivale a tempo de trabalho. Dias sem registros não comprovam ausência.');
   if(report.days.some(d=>d.approximateMode))paragraph('Horários aproximados. A visita da Linha do Tempo tem prioridade. Sem visita no dia, a primeira e a última posição interna são usadas como limites conservadores, supondo permanência entre elas enquanto não houver evidência de saída ou deslocamento.');
   const rows=summaryRows(report),days=dailyRows(report),pairs=timePairCount(report);
-  const radiusNotice=radiusReviewNotice(rows);if(radiusNotice)paragraph('Atenção ao raio da área: '+radiusNotice);
+  const radiusNotice=radiusReviewNotice(rows);if(radiusNotice){doc.setTextColor(180,35,24);paragraph('* Horário sem par. '+radiusNotice,9,true);doc.setTextColor(32,59,58);}
   const hasVisits=report.params.positionPairing==='spatial'||days.some(d=>d.visits.length),hasPositions=days.some(d=>d.positionTimes.length);
   const zone=report.params.zone;
   const clock=(t,day)=>t==null?'-':dayAt(t,zone)===day?new Intl.DateTimeFormat('pt-BR',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(t):displayTimestamp(t,zone).replace(/(\d{2}:\d{2}):\d{2}/,'$1');
@@ -49,11 +49,12 @@ export function reportPDF(report) {
     const window=kind==='arrival'?interval.arrivalWindow:interval.departureWindow;
     return window?`${clock(toMinute(window[0]),day)} - ${clock(ceilMinute(window[1]),day)} (estimada)`:'Não determinada';
   };
+  const timeCell=(interval,kind,day)=>{const value=kind==='arrival'?interval.arrival:interval.departure;const unpaired=!interval.spatial&&value!=null&&(interval.arrival==null||interval.departure==null);const content=clean(boundary(interval,kind,day))+(unpaired?' *':'')+(kind==='arrival'?(interval.sourceRowNumbers||[interval.rowNumber]).map(mark).join(''):'');return unpaired?{content,styles:{textColor:[180,35,24],fontStyle:'bold'}}:content;};
   const head=['Data / semana','Dia da semana',...(hasVisits?Array.from({length:pairs},(_,i)=>[`Entrada ${i+1}`,`Saída ${i+1}`]).flat():[]),...(hasPositions?['Posições registradas']:[]),'Total do dia'];
   const body=groupedReportRows(report).map(row=>{
     if(row.type==='week')return [{content:`Total da semana - ${displayDate(row.from)} a ${displayDate(row.to)}\n${clean(totalNotes(row))}`,colSpan:head.length-1,styles:{fillColor:[229,239,231],fontStyle:'bold'}},{content:clean(totalDurationText(row)),styles:{fillColor:[229,239,231],fontStyle:'bold'}}];
     return [displayDate(row.day)+(row.intervals.length?'':mark(row.emptyRowNumber)),row.weekday,
-      ...(hasVisits?Array.from({length:pairs},(_,i)=>{const interval=row.visits[i];return interval?[clean(boundary(interval,'arrival',row.day))+(interval.sourceRowNumbers||[interval.rowNumber]).map(mark).join(''),clean(boundary(interval,'departure',row.day))]:['-','-'];}).flat():[]),
+      ...(hasVisits?Array.from({length:pairs},(_,i)=>{const interval=row.visits[i];return interval?[timeCell(interval,'arrival',row.day),timeCell(interval,'departure',row.day)]:['-','-'];}).flat():[]),
       ...(hasPositions?[row.positionTimes.map(t=>clock(t,row.day)).join(' / ')+row.positionRows.map(p=>mark(p.rowNumber)).join('')||'-']:[]),clean(totalDurationText(row))];
   });
   table(head,body);

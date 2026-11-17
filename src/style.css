@@ -13,3 +13,5 @@
 .estimate-note{font-size:12px;line-height:1.5;color:#6f521d;background:#fff5df;padding:10px 12px;border-radius:6px}#presenceSummary th{white-space:nowrap}#presenceSummary td:not(:first-child){min-width:65px}.subtotal{break-inside:avoid}
 
 .period-fields input[type=date]{min-height:48px;font-size:16px;min-width:0}#periodError:empty{display:none}@media(max-width:760px){.period-fields{flex-direction:column;gap:0}.period-fields>*{flex:auto;width:100%}#fullPeriod{width:100%;min-height:48px}}
+
+.radius-warning{color:#b42318;background:#fff0ee;border-left:4px solid #b42318}.unpaired-time{color:#b42318;font-weight:700}

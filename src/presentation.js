@@ -63,6 +63,6 @@ export function groupedReportRows(report){const days=dailyRows(report),totals=pe
   const rows=[{...day,type:'day'}];if(!days[index+1]||weekStart(days[index+1].day)!==weekStart(day.day))rows.push({...totals.weeks.find(w=>w.key===weekStart(day.day)),type:'week'});return rows;
 });}
 export function timePairCount(report){return Math.max(2,...dailyRows(report).map(day=>day.visits.length));}
-export function totalNotes(total){return [total.hasEstimates?(total.approximateMode?'≈ Inclui horários aproximados':'† Inclui estimativas por transições espaciais'):'',total.unquantifiableDays?'Total parcial: soma dos intervalos disponíveis':'',total.partial?`Período: ${displayDate(total.selectedFrom)} a ${displayDate(total.selectedTo)}`:'',total.hasAlerts?'* Registros com alertas':''].filter(Boolean).join('. ');}
+export function totalNotes(total){return [total.hasEstimates?(total.approximateMode?'Inclui horários aproximados':'† Inclui estimativas por transições espaciais'):'',total.unquantifiableDays?'Total parcial: soma dos intervalos disponíveis':'',total.partial?`Período: ${displayDate(total.selectedFrom)} a ${displayDate(total.selectedTo)}`:'',total.hasAlerts?'* Registros com alertas':''].filter(Boolean).join('. ');}
 
 export function totalDurationText(total){if(!total.spatialMode)return durationText(total.durationMs,!!total.preserveSeconds);if(total.durationMinMs==null)return 'Não apurável';return total.durationMinMs===total.durationMaxMs?durationText(total.durationMinMs):durationText(total.durationMinMs)+' a '+durationText(total.durationMaxMs);}

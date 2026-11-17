@@ -18,13 +18,13 @@ export function summaryRows(report) {
     const supporting=report.points.filter(p=>p.within&&p.time>=period.start&&p.time<=period.end&&Number.isFinite(p.accuracy)&&p.accuracy>=0);
     const accuracies=supporting.map(p=>p.accuracy);
     return {
-    day:day.day,arrival:period.originalStart,departure:period.originalEnd,clippedStart:period.start,clippedEnd:period.end,
+    day:day.day,arrival:day.approximateMode&&!day.preserveSeconds?toMinute(period.originalStart):period.originalStart,departure:day.approximateMode&&!day.preserveSeconds?toMinute(period.originalEnd):period.originalEnd,clippedStart:period.start,clippedEnd:period.end,
     durationMs:day.preserveSeconds?period.end-period.start:toMinute(period.end)-toMinute(period.start),approximate:!!period.approximate,timingSource:period.timingSource,movementRefs:period.movementRefs||[],preserveSeconds:!!day.preserveSeconds,accuracy:source?.accuracy??null,
     supportAccuracy:accuracies.length?{min:accuracies.reduce((a,b)=>Math.min(a,b)),max:accuracies.reduce((a,b)=>Math.max(a,b)),count:accuracies.length,refs:supporting.map(p=>p.ref)}:null,
     ref:period.ref,alerts:period.alerts
   };});
 
-    const inferredRows=(day.inferredPeriods||[]).map(period=>({day:day.day,arrival:period.start,departure:period.end,clippedStart:period.start,clippedEnd:period.end,firstPosition:period.firstPosition,lastPosition:period.lastPosition,durationMs:period.end==null?null:period.end-period.start,approximate:true,preserveSeconds:true,timingSource:period.timingSource,continuityAssumed:period.continuityAssumed,ref:period.ref,refs:period.sourceRefs,alerts:period.alerts}));
+    const inferredRows=(day.inferredPeriods||[]).map(period=>({day:day.day,arrival:period.start,departure:period.end,clippedStart:period.start,clippedEnd:period.end,firstPosition:period.firstPosition,lastPosition:period.lastPosition,durationMs:period.end==null?null:period.end-period.start,approximate:true,preserveSeconds:!!day.preserveSeconds,timingSource:period.timingSource,continuityAssumed:period.continuityAssumed,ref:period.ref,refs:period.sourceRefs,alerts:period.alerts}));
     const spatialRows=(day.spatialPeriods||[]).map(period=>({day:day.day,spatial:true,estimated:!!period.arrivalWindow||!!period.departureWindow,arrival:period.arrivalWindow?.[1]??null,departure:period.departureWindow?.[0]??null,firstPosition:period.firstPosition,lastPosition:period.lastPosition,arrivalWindow:period.arrivalWindow,departureWindow:period.departureWindow,durationMs:null,ref:period.ref,refs:period.sourceRefs,alerts:period.alerts}));
     const pairedSourceRefs=new Set([...(day.spatialPeriods||[]),...(day.inferredPeriods||[])].flatMap(period=>period.sourceRefs).concat(day.supportOnlyPositionRefs||[]));
     const observations=(observationsByDay.get(day.day)||[]).filter(p=>!pairedSourceRefs.has(p.ref)&&!day.periods.some(v=>p.time>=v.start&&p.time<=v.end));
@@ -65,4 +65,4 @@ export function groupedReportRows(report){const days=dailyRows(report),totals=pe
 export function timePairCount(report){return Math.max(2,...dailyRows(report).map(day=>day.visits.length));}
 export function totalNotes(total){return [total.hasEstimates?(total.approximateMode?'Inclui horários aproximados':'† Inclui estimativas por transições espaciais'):'',total.unquantifiableDays?'Total parcial: soma dos intervalos disponíveis':'',total.partial?`Período: ${displayDate(total.selectedFrom)} a ${displayDate(total.selectedTo)}`:'',total.hasAlerts?'* Registros com alertas':''].filter(Boolean).join('. ');}
 
-export function totalDurationText(total){if(!total.spatialMode)return durationText(total.durationMs,!!total.preserveSeconds);if(total.durationMinMs==null)return 'Não apurável';return total.durationMinMs===total.durationMaxMs?durationText(total.durationMinMs):durationText(total.durationMinMs)+' a '+durationText(total.durationMaxMs);}
+export function totalDurationText(total){if(!total.spatialMode)return durationText(total.durationMs);if(total.durationMinMs==null)return 'Não apurável';return total.durationMinMs===total.durationMaxMs?durationText(total.durationMinMs):durationText(total.durationMinMs)+' a '+durationText(total.durationMaxMs);}

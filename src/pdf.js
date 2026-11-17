@@ -35,12 +35,13 @@ export function reportPDF(report) {
   paragraph('Geoprova - Cartão de permanência',17,true);
   paragraph(report.params.area.label||'Local selecionado',11,true);
   paragraph(`${displayDate(report.params.from)} a ${displayDate(report.params.to)} | ${report.params.zone}`);
+  paragraph('Horários em horas e minutos. Os segundos são descartados de cada entrada e saída antes do cálculo das durações e totais.');
   paragraph('Presença no local não equivale a tempo de trabalho. Dias sem registros não comprovam ausência.');
   if(report.days.some(d=>d.approximateMode))paragraph('Horários aproximados. A visita da Linha do Tempo tem prioridade. Sem visita no dia, a primeira e a última posição interna são usadas como limites conservadores, supondo permanência entre elas enquanto não houver evidência de saída ou deslocamento.');
   const rows=summaryRows(report),days=dailyRows(report),pairs=timePairCount(report);
   const hasVisits=report.params.positionPairing==='spatial'||days.some(d=>d.visits.length),hasPositions=days.some(d=>d.positionTimes.length);
-  const seconds=report.days.some(d=>d.preserveSeconds),zone=report.params.zone;
-  const clock=(t,day)=>t==null?'-':dayAt(t,zone)===day?new Intl.DateTimeFormat('pt-BR',{timeZone:zone,hour:'2-digit',minute:'2-digit',...(seconds?{second:'2-digit'}:{})}).format(t):displayTimestamp(t,zone);
+  const zone=report.params.zone;
+  const clock=(t,day)=>t==null?'-':dayAt(t,zone)===day?new Intl.DateTimeFormat('pt-BR',{timeZone:zone,hour:'2-digit',minute:'2-digit'}).format(t):displayTimestamp(t,zone).replace(/(\d{2}:\d{2}):\d{2}/,'$1');
   const mark=number=>rows[number-1]?.alerts.length?` *${number}`:'';
   const boundary=(interval,kind,day)=>{
     if(!interval.spatial)return clock(kind==='arrival'?interval.arrival:interval.departure,day);

@@ -75,10 +75,15 @@ export async function workbook(report) {
   book.views=[{activeTab:0}];
   return new Uint8Array(await book.xlsx.writeBuffer());
 }
-export async function exportBundle(report) {
+export async function exportFiles(report) {
+  const {reportPDF}=await import('./pdf.js');
   const json=new TextEncoder().encode(JSON.stringify(report,null,2));
-  const xlsx=await workbook(report);
-  const files=[{name:`geoprova-${report.id}.json`,bytes:json,type:'application/json'},{name:`geoprova-${report.id}.xlsx`,bytes:xlsx,type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}];
-  const manifest={id:report.id,algorithm:'SHA-256',notice:'Hashes não comprovam autoria. Manifesto separado, sem autorreferência.',files:await Promise.all(files.map(async f=>({name:f.name,size:f.bytes.length,sha256:await sha256(f.bytes)})))};
-  files.forEach(f=>download(f.bytes,f.name,f.type));download(JSON.stringify(manifest,null,2),`geoprova-${report.id}-manifesto.json`,'application/json');
+  const pdf=reportPDF(report);
+  const files=[{name:`geoprova-${report.id}.json`,bytes:json,type:'application/json'},{name:`geoprova-${report.id}.pdf`,bytes:pdf,type:'application/pdf'}];
+  const manifest={id:report.id,algorithm:'SHA-256',notice:'Comprovante de integridade: permite comparar o conteúdo dos arquivos PDF e JSON. Não comprova autoria, origem ou veracidade dos dados. Manifesto separado, sem autorreferência.',files:await Promise.all(files.map(async f=>({name:f.name,size:f.bytes.length,sha256:await sha256(f.bytes)})))};
+  return [...files,{name:`geoprova-${report.id}-manifesto.json`,bytes:new TextEncoder().encode(JSON.stringify(manifest,null,2)),type:'application/json'}];
+}
+export async function exportBundle(report) {
+  const files=await exportFiles(report);
+  files.forEach(f=>download(f.bytes,f.name,f.type));
 }

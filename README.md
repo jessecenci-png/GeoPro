@@ -66,7 +66,7 @@ A consulta real a Photon e OSM neste ambiente retornou `CONNECT 403` do proxy an
 
 ## Testar pelo GitHub Pages
 
-O aplicativo completo está em `docs/index.html`, sem servidor Node ou instalação no computador. No GitHub, acesse Settings → Pages → Source: Deploy from a branch → Branch: entrega-geoprova → Folder: /docs → Save. O endereço esperado após a publicação é https://jessecenci-png.github.io/GeoPro/ . A publicação depende das configurações e da disponibilidade do GitHub Pages para este repositório. O arquivo .nojekyll evita processamento do HTML compilado.
+O aplicativo completo está em `docs/index.html`, sem servidor Node ou instalação no computador. No GitHub, acesse Settings → Pages → Source: Deploy from a branch → Branch: entrega-geopro → Folder: /docs → Save. O endereço esperado após a publicação é https://jessecenci-png.github.io/GeoPro/ . A publicação depende das configurações e da disponibilidade do GitHub Pages para este repositório. O arquivo .nojekyll evita processamento do HTML compilado.
 
 Essa edição é estática e consulta o Photon diretamente. O histórico e os relatórios continuam no navegador; busca e imagens dependem dos provedores externos. Preparar os arquivos não confirma que o Pages foi ativado ou que as consultas reais funcionam. A tentativa de consultar/configurar o Pages pela API deste ambiente retornou Forbidden.
 

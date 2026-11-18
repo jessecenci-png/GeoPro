@@ -2,7 +2,7 @@ import {toMinute,dayAt} from './dates.js';
 import {applySpatialTransitions,spatialSessions} from './estimation.js';
 import {applyConservativeInference} from './inference.js';
 export {dayAt} from './dates.js';
-export const VERSION = '0.9.1';
+export const VERSION = '0.9.2';
 export const RULES = 'experimental-2026-11-17.1';
 export const PRIVACY = 'Seus dados de localização são processados neste dispositivo e não são enviados ao criador do software.';
 export const ABSENCE = 'A ausência de registros de localização não significa que a pessoa esteve ausente do local de trabalho. Pode decorrer de falhas de localização, configurações do aparelho, interrupções na coleta ou outras limitações dos dados.';

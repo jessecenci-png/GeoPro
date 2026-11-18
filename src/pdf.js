@@ -11,7 +11,7 @@ export function reportPDF(report) {
   doc.addFileToVFS('OpenSans-Regular.ttf',regular);doc.addFont('OpenSans-Regular.ttf','OpenSans','normal');
   doc.addFileToVFS('OpenSans-Semibold.ttf',bold);doc.addFont('OpenSans-Semibold.ttf','OpenSans','bold');
   doc.setFont('OpenSans');
-  doc.setProperties({title:'Geoprova - Cartão de permanência',author:'Geoprova'});
+  doc.setProperties({title:'GeoPro - Cartão de permanência',author:'GeoPro'});
   const width=doc.internal.pageSize.getWidth(),height=doc.internal.pageSize.getHeight(),margin=12;
   let y=18;
   const clean=value=>String(value??'').replaceAll('→',' para ').replaceAll('≈','').replace(/[–—]/g,'-');
@@ -32,7 +32,7 @@ export function reportPDF(report) {
       rowPageBreak:'avoid',horizontalPageBreak:true,horizontalPageBreakRepeat:[0,1]});
     y=doc.lastAutoTable.finalY+8;
   };
-  paragraph('Geoprova - Cartão de permanência',17,true);
+  paragraph('GeoPro - Cartão de permanência',17,true);
   paragraph(report.params.area.label||'Local selecionado',11,true);
   paragraph(`${displayDate(report.params.from)} a ${displayDate(report.params.to)} | ${report.params.zone}`);
   paragraph('Horários em horas e minutos. Os segundos são descartados de cada entrada e saída antes do cálculo das durações e totais.');
@@ -68,6 +68,6 @@ export function reportPDF(report) {
   paragraph('Limitações da análise',12,true);
   for(const note of report.limitations||[])paragraph(note,8);
   const count=doc.getNumberOfPages();
-  for(let page=1;page<=count;page++){doc.setPage(page);doc.setFont('OpenSans','normal');doc.setFontSize(8);doc.setTextColor(90);doc.text(`Geoprova | Página ${page} de ${count}`,margin,height-7);}
+  for(let page=1;page<=count;page++){doc.setPage(page);doc.setFont('OpenSans','normal');doc.setFontSize(8);doc.setTextColor(90);doc.text(`GeoPro | Página ${page} de ${count}`,margin,height-7);}
   return new Uint8Array(doc.output('arraybuffer'));
 }

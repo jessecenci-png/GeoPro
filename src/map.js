@@ -3,7 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import {fetchSuggestions} from './locations.js';
 export function mountMap({onSelect,onInvalidate}){
   const $=id=>document.getElementById(id);
-  const hosted=!globalThis.GEOPROVA_STANDALONE&&/^https?:$/.test(location.protocol);
+  const hosted=!globalThis.GEOPRO_STANDALONE&&/^https?:$/.test(location.protocol);
   let map,marker,circle,selected,timer,controller,sequence=0,chosenText='',lastRequest=0;
   const cache=new Map();
   const status=text=>{$('mapStatus').textContent=text;};

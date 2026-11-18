@@ -9,7 +9,7 @@ export function sampleReport(){
 }
 test('exportação contém PDF legível, JSON e manifesto com hashes dos bytes exatos, sem XLSX',async()=>{
  const report=sampleReport(),files=await exportFiles(report);
- assert.deepEqual(files.map(f=>f.name),['geoprova-teste-pdf.json','geoprova-teste-pdf.pdf','geoprova-teste-pdf-manifesto.json']);
+ assert.deepEqual(files.map(f=>f.name),['geopro-teste-pdf.json','geopro-teste-pdf.pdf','geopro-teste-pdf-manifesto.json']);
  assert.equal(new TextDecoder().decode(files[1].bytes.slice(0,5)),'%PDF-');
  assert.deepEqual(JSON.parse(new TextDecoder().decode(files[0].bytes)),JSON.parse(JSON.stringify(report)));
  const manifest=JSON.parse(new TextDecoder().decode(files[2].bytes));

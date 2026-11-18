@@ -1,4 +1,4 @@
-# Geoprova 0.5
+# GeoPro 0.9.2
 
 Aplicativo em português para analisar localmente JSONs da Linha do Tempo do Google. Não certifica prova, autenticidade, admissibilidade judicial ou jornada de trabalho.
 
@@ -7,7 +7,7 @@ Aplicativo em português para analisar localmente JSONs da Linha do Tempo do Goo
 Node.js 24 e npm 11. Não são necessários chave de API, cartão ou Google Cloud.
 
 ```sh
-cd /workspace/Geoprova
+cd /workspace/GeoPro
 npm ci
 npm test
 npm run build
@@ -36,7 +36,7 @@ Photon e o servidor público de imagens OSM são gratuitos, com limites, cobertu
 npm run bundle
 ```
 
-Gera `artifacts/Geoprova-0.5.html`, com código, estilos, mapa Leaflet e gerador XLSX incorporados. A análise e a exportação dispensam servidor. Nesse formato, a consulta Photon é **direta**, podendo ser bloqueada por CORS/arquivo local ou pelo provedor. O HTML único não pode incorporar o servidor Node; por isso o site é o caminho recomendado para eliminar essa classe de bloqueio. O bundle também precisa de Internet para sugestões e imagens do mapa.
+Gera `artifacts/GeoPro-0.9.2.html`, com código, estilos, mapa Leaflet e gerador XLSX incorporados. A análise e a exportação dispensam servidor. Nesse formato, a consulta Photon é **direta**, podendo ser bloqueada por CORS/arquivo local ou pelo provedor. O HTML único não pode incorporar o servidor Node; por isso o site é o caminho recomendado para eliminar essa classe de bloqueio. O bundle também precisa de Internet para sugestões e imagens do mapa.
 
 ## Análise e exportação
 
@@ -52,7 +52,7 @@ A planilha contém metodologia/integridade antes dos resultados, resumo diário 
 
 ## Privacidade e limites
 
-JSON, coordenadas do histórico e relatórios são processados no navegador. Não há telemetria. Ao digitar a busca, a consulta é enviada ao Photon e, no site, também ao servidor Geoprova; isso é informado junto ao campo. O provedor do mapa recebe a área visualizada e dados da conexão. Selecionar um estabelecimento não envia o histórico importado. Os arquivos permanecem na memória da aba; salve as exportações antes de fechá-la.
+JSON, coordenadas do histórico e relatórios são processados no navegador. Não há telemetria. Ao digitar a busca, a consulta é enviada ao Photon e, no site, também ao servidor GeoPro; isso é informado junto ao campo. O provedor do mapa recebe a área visualizada e dados da conexão. Selecionar um estabelecimento não envia o histórico importado. Os arquivos permanecem na memória da aba; salve as exportações antes de fechá-la.
 
 A origem suporta semanticSegments, rawSignals de posição e preserva userLocationProfile. Coordenadas Android com graus são reconhecidas. Campos desconhecidos permanecem no original, sem invenção de valores. Cobertura por extremos não significa coleta contínua. Posições isoladas não viram permanência contínua. Fim do último segmento não comprova saída. Ponto de trajeto fora do pequeno raio não gera inconsistência por esse fato isolado.
 
@@ -66,7 +66,7 @@ A consulta real a Photon e OSM neste ambiente retornou `CONNECT 403` do proxy an
 
 ## Testar pelo GitHub Pages
 
-O aplicativo completo está em `docs/index.html`, sem servidor Node ou instalação no computador. No GitHub, acesse Settings → Pages → Source: Deploy from a branch → Branch: entrega-geoprova → Folder: /docs → Save. O endereço esperado após a publicação é https://jessecenci-png.github.io/Geoprova/ . A publicação depende das configurações e da disponibilidade do GitHub Pages para este repositório. O arquivo .nojekyll evita processamento do HTML compilado.
+O aplicativo completo está em `docs/index.html`, sem servidor Node ou instalação no computador. No GitHub, acesse Settings → Pages → Source: Deploy from a branch → Branch: entrega-geoprova → Folder: /docs → Save. O endereço esperado após a publicação é https://jessecenci-png.github.io/GeoPro/ . A publicação depende das configurações e da disponibilidade do GitHub Pages para este repositório. O arquivo .nojekyll evita processamento do HTML compilado.
 
 Essa edição é estática e consulta o Photon diretamente. O histórico e os relatórios continuam no navegador; busca e imagens dependem dos provedores externos. Preparar os arquivos não confirma que o Pages foi ativado ou que as consultas reais funcionam. A tentativa de consultar/configurar o Pages pela API deste ambiente retornou Forbidden.
 
@@ -137,3 +137,7 @@ Os segundos são preservados no modo principal, tanto nos horários quanto nas d
 - Horários em HH:MM; segundos descartados de cada limite antes dos cálculos.
 - Alerta para conferir o ponto e o raio quando houver entrada ou saída sem par.
 - Conferência por hash com explicação sobre integridade e seus limites.
+
+## Versão 0.9.2 - GeoPro
+
+O aplicativo passou a se chamar GeoPro. Interface, PDF, nomes dos arquivos exportados, pacote de publicação e identificação técnica foram atualizados. As regras de cálculo não foram alteradas. Os documentos antigos conservam seus nomes e conteúdo originais; a conferência por manifesto usa o nome exato registrado em cada manifesto.

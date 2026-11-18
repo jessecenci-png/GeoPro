@@ -16,7 +16,7 @@ export function createApp({fetcher=globalThis.fetch,root=resolve('dist'),minInte
         busy=true;last=Date.now();
         try{
           const upstream=new URL('https://photon.komoot.io/api/');upstream.search=new URLSearchParams({q,limit:'6'});
-          const response=await fetcher(upstream,{headers:{'User-Agent':'Geoprova/0.5 (https://github.com/jessecenci-png/Geoprova)','Accept':'application/json'},signal:AbortSignal.timeout(12000)});
+          const response=await fetcher(upstream,{headers:{'User-Agent':'GeoPro/0.5 (https://github.com/jessecenci-png/GeoPro)','Accept':'application/json'},signal:AbortSignal.timeout(12000)});
           if(!response.ok){send(res,response.status===429?429:502,{error:'Serviço de localização indisponível.'});return;}
           const data=await response.json();if(!Array.isArray(data.features))throw Error('Formato inválido');
           if(cache.size>=256)cache.delete(cache.keys().next().value);cache.set(q,{time:Date.now(),data});send(res,200,data);
@@ -33,5 +33,5 @@ export function createApp({fetcher=globalThis.fetch,root=resolve('dist'),minInte
   };
 }
 if(import.meta.url===pathToFileURL(process.argv[1]||'').href){
-  const port=Number(process.env.PORT||3000);http.createServer(createApp()).listen(port,'0.0.0.0',()=>console.log(`Geoprova iniciado na porta ${port}. Sem upload de histórico ou relatórios.`));
+  const port=Number(process.env.PORT||3000);http.createServer(createApp()).listen(port,'0.0.0.0',()=>console.log(`GeoPro iniciado na porta ${port}. Sem upload de histórico ou relatórios.`));
 }

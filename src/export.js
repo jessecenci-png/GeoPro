@@ -25,7 +25,7 @@ export function portable(result,acquisition) {
 }
 export async function workbook(report) {
   const {default:ExcelJS}=await import('exceljs');
-  const book=new ExcelJS.Workbook();book.creator='Geoprova';
+  const book=new ExcelJS.Workbook();book.creator='GeoPro';
   function sheet(name,cols,rows) {
     const s=book.addWorksheet(name);s.columns=cols.map(([header,key,width=25])=>({header,key,width}));s.addRows(rows);
     s.getRow(1).font={bold:true,color:{argb:'FFFFFFFF'}};s.getRow(1).fill={type:'pattern',pattern:'solid',fgColor:{argb:'FF163C3A'}};
@@ -79,9 +79,9 @@ export async function exportFiles(report) {
   const {reportPDF}=await import('./pdf.js');
   const json=new TextEncoder().encode(JSON.stringify(report,null,2));
   const pdf=reportPDF(report);
-  const files=[{name:`geoprova-${report.id}.json`,bytes:json,type:'application/json'},{name:`geoprova-${report.id}.pdf`,bytes:pdf,type:'application/pdf'}];
+  const files=[{name:`geopro-${report.id}.json`,bytes:json,type:'application/json'},{name:`geopro-${report.id}.pdf`,bytes:pdf,type:'application/pdf'}];
   const manifest={id:report.id,algorithm:'SHA-256',notice:'Comprovante de integridade: permite comparar o conteúdo dos arquivos PDF e JSON. Não comprova autoria, origem ou veracidade dos dados. Manifesto separado, sem autorreferência.',files:await Promise.all(files.map(async f=>({name:f.name,size:f.bytes.length,sha256:await sha256(f.bytes)})))};
-  return [...files,{name:`geoprova-${report.id}-manifesto.json`,bytes:new TextEncoder().encode(JSON.stringify(manifest,null,2)),type:'application/json'}];
+  return [...files,{name:`geopro-${report.id}-manifesto.json`,bytes:new TextEncoder().encode(JSON.stringify(manifest,null,2)),type:'application/json'}];
 }
 export async function exportBundle(report) {
   const files=await exportFiles(report);
